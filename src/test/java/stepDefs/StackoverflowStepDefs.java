@@ -7,12 +7,16 @@ import pages.HomePage;
 import pages.baseFunc.BaseFunc;
 
 import java.io.IOException;
+import java.sql.SQLException;
 import java.util.List;
 
 public class StackoverflowStepDefs {
     private final String STACKOVERFLOW_HOME_PAGE = "www.stackoverflow.com";
     private BaseFunc baseFunc = new BaseFunc();
     private HomePage homePage;
+    private List<String> listOfArticles;
+    private final String user = "root";
+    private final String password = "password";
 
     @Given("Stackoverflow home page")
     public void open_home_page() {
@@ -27,11 +31,16 @@ public class StackoverflowStepDefs {
 
     @Then("Search and output articles by:")
     public void search_articles_by(List<String> words) throws IOException {
-        homePage.outputArticles(words);
+        listOfArticles = homePage.outputArticles(words);
+    }
+
+    @Then("Store list of found articles in DB with path: {word}, driver: {word}")
+    public void store_in_db(String pathToDb, String driver) throws SQLException, ClassNotFoundException {
+        homePage.storeInDb(listOfArticles, pathToDb, driver, user, password);
     }
 
     @Then("Close browser")
-    public void clode_browser() {
+    public void close_browser() {
         baseFunc.quit();
     }
 }

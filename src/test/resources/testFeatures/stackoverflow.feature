@@ -11,4 +11,5 @@ Feature: Stackoverflow test
       | 2013    |
       | json    |
       | Error   |
+    And Store list of found articles in DB with path: pathToDatabase, driver: driverName
     And Close browser

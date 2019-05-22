@@ -6,6 +6,7 @@ import org.openqa.selenium.WebElement;
 import pages.baseFunc.BaseFunc;
 
 import java.io.IOException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -19,6 +20,7 @@ public class HomePage {
     private final By FOOTER = By.xpath(".//div[@class = 'site-footer--container']");
     private final By ARTICLES = By.xpath(".//a[@class = 'question-hyperlink']");
     private final By COOKIES = By.xpath(".//a[@aria-label = 'notice-dismiss']");
+    private Statement statement = null;
 
     public HomePage(BaseFunc baseFunc) {
         this.baseFunc = baseFunc;
@@ -30,10 +32,10 @@ public class HomePage {
 
     public void acceptCookies() {
         baseFunc.waitForElement(COOKIES);
-        baseFunc.getelement(COOKIES).click();
+        baseFunc.getElement(COOKIES).click();
     }
 
-    public void outputArticles(List<String> wordsToSearch) throws IOException {
+    public List<String> outputArticles(List<String> wordsToSearch) throws IOException {
         List<WebElement> articles = baseFunc.getAllElements(ARTICLES);
         HashMap<String, List<String>> foundArticles = new HashMap<>();
         List<String> allArticlesFound = new ArrayList<>();
@@ -49,5 +51,21 @@ public class HomePage {
             baseFunc.listToFile("output", allArticlesFound);
         }
         baseFunc.arrayToJsonFile("json", foundArticles);
+        return allArticlesFound;
+    }
+
+    public void storeInDb(List<String> listToStore, String pathToDb, String driver, String user, String password) throws ClassNotFoundException, SQLException {
+        Class.forName(driver);
+        Connection connection = DriverManager.getConnection(pathToDb, user, password);
+        if (!connection.isClosed()) {
+            connection.close();
+        }
+
+        statement = connection.createStatement();
+
+        for (String article : listToStore) {
+            statement.executeUpdate(article);
+        }
+        statement.close();
     }
 }

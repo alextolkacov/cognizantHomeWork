@@ -42,7 +42,7 @@ public class BaseFunc {
         driver.get(url);
     }
 
-    public WebElement getelement(By locator) {
+    public WebElement getElement(By locator) {
         Assertions.assertFalse(driver.findElements(locator).isEmpty(), "Element is not found");
         return driver.findElement(locator);
     }
